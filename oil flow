@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Oil Flow</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #7d0a0ad1;
+        }
+        header {
+            background-color: #ff6200;
+            color: white;
+            padding: 1rem 0;
+            text-align: center;
+        }
+        main {
+            margin: 20px;
+            padding: 20px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        .form-group button {
+            background-color: #ff7700;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+        .form-group button:hover {
+            background-color: #b34500;
+        }
+        .result {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #e9ecef;
+            border-radius: 4px;
+        }
+        .explanation {
+            margin-top: 10px;
+            font-style: italic;
+            color: #555;
+        }
+        .save-button {
+            margin-top: 20px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+        .save-button:hover {
+            background-color: #218838;
+        }
+        canvas {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Oil Flow</h1>
+        <p>Hitung kebutuhan material dan parameter operasi dasar</p>
+    </header>
+    <main>
+        <form id="calculator-form">
+            <div class="form-group">
+                <label for="volume">Volume Reservoir (m<sup>3</sup>):</label>
+                <input type="number" id="volume" name="volume" required>
+            </div>
+            <div class="form-group">
+                <label for="porosity">Porositas (%):</label>
+                <input type="number" id="porosity" name="porosity" required>
+            </div>
+            <div class="form-group">
+                <label for="saturation">Saturasi Minyak (%):</label>
+                <input type="number" id="saturation" name="saturation" required>
+            </div>
+            <div class="form-group">
+                <button type="button" onclick="calculateOilVolume()">Hitung Volume Minyak</button>
+            </div>
+        </form>
+        <div class="result" id="result" style="display: none;">
+            <h3>Hasil Perhitungan:</h3>
+            <p id="oilVolume"></p>
+            <p class="explanation" id="explanation"></p>
+            <button class="save-button" onclick="saveAsImage()">Simpan Hasil sebagai JPEG</button>
+        </div>
+        <canvas id="resultCanvas"></canvas>
+    </main>
+    <script>
+        function calculateOilVolume() {
+            const volume = parseFloat(document.getElementById('volume').value);
+            const porosity = parseFloat(document.getElementById('porosity').value);
+            const saturation = parseFloat(document.getElementById('saturation').value);
+
+            if (isNaN(volume) || isNaN(porosity) || isNaN(saturation)) {
+                alert('Harap isi semua kolom dengan angka yang valid.');
+                return;
+            }
+
+            const oilVolume = volume * (porosity / 100) * (saturation / 100);
+
+            document.getElementById('result').style.display = 'block';
+            document.getElementById('oilVolume').innerText = `Volume minyak di reservoir adalah ${oilVolume.toFixed(2)} m³.`;
+
+            const explanation = `Hasil ini diperoleh dengan mengalikan volume reservoir (${volume} m³) dengan porositas (${porosity}%) dan saturasi minyak (${saturation}%).`;
+            document.getElementById('explanation').innerText = explanation;
+        }
+
+        function saveAsImage() {
+            const canvas = document.getElementById('resultCanvas');
+            const context = canvas.getContext('2d');
+
+            // Set canvas size
+            canvas.width = 800;
+            canvas.height = 400;
+
+            // Set background color
+            context.fillStyle = '#ffffff';
+            context.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Add text content
+            context.fillStyle = '#000000';
+            context.font = '20px Arial';
+            context.fillText(document.getElementById('oilVolume').innerText, 20, 50);
+            context.fillText(document.getElementById('explanation').innerText, 20, 100);
+
+            // Save canvas as JPEG
+            const link = document.createElement('a');
+            link.download = 'hasil_perhitungan.jpeg';
+            link.href = canvas.toDataURL('image/jpeg', 1.0);
+            link.click();
+        }
+    </script>
+</body>
+</html>
